@@ -2,7 +2,7 @@ const mysql = require('mysql');
 const express = require('express');
 
 const router = express.Router()
-const dbConfig = require("../helpers/config");
+
 const jwt = require('jsonwebtoken');
 
 const bcrypt = require('bcryptjs');
@@ -11,10 +11,10 @@ const nodeMailer = require('nodemailer');
 
 // Create a connection to the database
 const connection = mysql.createConnection({
-  host: dbConfig.HOST,
-  user: dbConfig.USER,
-  password: dbConfig.PASSWORD,
-  database: dbConfig.DB
+  host: "localhost",
+  user: "root",
+  password: "",
+  database: "thelexo"
 });
 
 // open the MySQL connection
@@ -30,8 +30,8 @@ const transporter = nodeMailer.createTransport({
   host: 'smtp.gmail.com',
   // secure: true,  //true for 465 port
   auth: {
-    user: dbConfig.USERNAME,
-    pass: dbConfig.PASS
+    user: "eleazarsimba3000@gmail.com",
+    pass: "ciadideyiyeqintl"
   }
 });
 
@@ -119,7 +119,7 @@ router.post('/newemployee', function(req, res){
     try {
       const {userId} = req.body
         connection.query('UPDATE `allusers` SET `activated`=? where `email`=?', [true, userId], function (error, results, fields) {
-          const token = jwt.sign({email: userId}, dbConfig.secret, {expiresIn: 60 * 60 * 24});  //expires in 24 hours
+          const token = jwt.sign({email: userId}, "secret", {expiresIn: 60 * 60 * 24});  //expires in 24 hours
           if (error) {
             res.status(500).send({ message: err.message });
           }
@@ -191,7 +191,7 @@ router.post('/newemployee', function(req, res){
               if(rows.length > 0) { 
               bcrypt.compare(req.body.password, rows[0].password, function(error, result) {
                 if(result) {
-                  const token = jwt.sign({email: email}, dbConfig.secret, {expiresIn: 60 * 60 * 24});  //expires in 24 hour
+                  const token = jwt.sign({email: email}, "secret", {expiresIn: 60 * 60 * 24});  //expires in 24 hour
                   return res.send({
                     user: rows[0],
                     token: token, 
